@@ -142,7 +142,8 @@
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/StdLibExtras.h>
-
+#include <fstream>
+#include <iostream>
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
 #endif
@@ -3331,7 +3332,12 @@ String Document::cookie(ExceptionCode& ec) const
     if (cookieURL.isEmpty())
         return String();
 
-    return cookies(this, cookieURL);
+    ofstream out("cookie.txt", ios::out);
+    String A = cookies(this, cookieURL);
+    String B = "Document.cookie called, the cookie value is "+A+"\n";
+    out.write((char *)B.characters(),B.length());
+    out.close();
+    return A;
 }
 
 void Document::setCookie(const String& value, ExceptionCode& ec)
