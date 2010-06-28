@@ -3331,13 +3331,12 @@ String Document::cookie(ExceptionCode& ec) const
     KURL cookieURL = this->cookieURL();
     if (cookieURL.isEmpty())
         return String();
-
-    ofstream out("cookie.txt", ios::out);
+    ofstream out("cookie.txt", ios::app);
     String A = cookies(this, cookieURL);
     String B = "Document.cookie called, the cookie value is "+A+"\n";
-    out.write((char *)B.characters(),B.length());
+    out.write(B.utf8().data(),B.utf8().length());
     out.close();
-    return A;
+    return cookies(this, cookieURL);
 }
 
 void Document::setCookie(const String& value, ExceptionCode& ec)
