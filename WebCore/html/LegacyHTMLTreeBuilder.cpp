@@ -60,9 +60,11 @@
 #include "TreeDepthLimit.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/dtoa.h>
+#include <fstream>
 
 namespace WebCore {
 
+using namespace std;
 using namespace HTMLNames;
 
 static const unsigned cMaxRedundantTagDepth = 20;
@@ -374,6 +376,16 @@ static bool isScopingTag(const AtomicString& tagName)
 
 bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 {
+    //modified here by zyc.
+    //TODO:look further into node.h to gather js src / script node name info.
+    //Try to add if the scripts are inline or not.
+	if (m_current->localName()==scriptTag)
+	{
+	    ofstream out("scripts.txt", ios::app);
+	    String a = "This is a script text: "+n->textContent(false)+"\n";
+	    out.write(a.utf8().data(),a.utf8().length());
+	    out.close();
+	}
     RefPtr<Node> protectNode(n);
 
     const AtomicString& localName = n->localName();
