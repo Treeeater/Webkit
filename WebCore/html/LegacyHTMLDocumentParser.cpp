@@ -1910,6 +1910,8 @@ PassRefPtr<Node> LegacyHTMLDocumentParser::processToken()
             static_cast<HTMLViewSourceDocument*>(document())->addViewSourceToken(&m_currentToken);
         else
             // pass the token over to the parser, the parser DOES NOT delete the token
+            //modified by zyc:
+            //should migrate the script hashing code here.
             n = m_treeBuilder->parseToken(&m_currentToken);
     }
     m_currentToken.reset();

@@ -281,6 +281,8 @@ PassRefPtr<Node> LegacyHTMLTreeBuilder::parseToken(Token* t)
             m_haveContent = true;
         
         RefPtr<Node> n;
+        //zyc: converting token to node and prepare to add the new node.
+        //zyc: may need to change something here.
         String text = t->text.get();
         unsigned charsLeft = text.length();
         while (charsLeft) {
@@ -377,8 +379,6 @@ static bool isScopingTag(const AtomicString& tagName)
 bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 {
     //modified here by zyc.
-    //TODO:look further into node.h to gather js src / script node name info.
-    //Try to add if the scripts are inline or not.
 	if (m_current->localName()==scriptTag)
 	{
 	    ofstream out("scripts.txt", ios::app);
@@ -386,6 +386,39 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 	    out.write(a.utf8().data(),a.utf8().length());
 	    out.close();
 	}
+	//String attfine="attributes fine\n";
+	//String getattfine="getattr fine\n";
+	String inlinescript="This is an inline script!\n";
+	if (n->localName()==scriptTag)
+	{
+		ofstream out("scripts.txt", ios::app);
+		if (n->attributes()!=NULL)
+		{
+			//out.write(attfine.utf8().data(),attfine.utf8().length());
+			if (n->attributes()->getAttributeItem(srcAttr)!=NULL)
+			{
+				//out.write(getattfine.utf8().data(),getattfine.utf8().length());
+				if (n->attributes()->getAttributeItem(srcAttr)->value()!=NULL)
+				{		
+					//This is an external/embedded script.
+					//TODO: proper manipulation for relative source URLs (beginning w/o http://)
+					String src = "This is an embedded script, the source is: "+n->attributes()->getAttributeItem(srcAttr)->value()+"\n";
+					out.write(src.utf8().data(),src.utf8().length());	
+				}
+			}
+			else
+			{
+				//this is an inline script node.
+				out.write(inlinescript.utf8().data(),inlinescript.utf8().length());
+			}
+		}
+		else
+		{
+			//this is a bad script node!
+		}
+		out.close();
+	}
+	//done modified by zyc
     RefPtr<Node> protectNode(n);
 
     const AtomicString& localName = n->localName();
