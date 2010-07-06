@@ -383,9 +383,12 @@ static bool isScopingTag(const AtomicString& tagName)
 bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 {
     //modified here by zyc.
+    //TODO: All the file output are just for debugging purposes.
+    //TODO: Should remove all file output when done editing.
+    //TODO: How about duplicate javascripts? Do we ignore this case?
     String inlineScript="This is an inline script!\n";
     unsigned scriptHash = 0;
-    //Get the source of the script/determine if the script is embedded or not
+    //Get the source of the script/determine if the script is embedded or inline
 	if (n->localName()==scriptTag)
 	{
 		ofstream out("scripts.txt", ios::app);
@@ -396,7 +399,7 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 			{
 				//out.write(getattfine.utf8().data(),getattfine.utf8().length());
 				if (n->attributes()->getAttributeItem(srcAttr)->value()!=NULL)
-				{		
+				{
 					//This is an external/embedded script.
 					//TODO: proper manipulation for relative source URLs (beginning w/o http://)
 					String src = "This is an embedded script, the source is: "+n->attributes()->getAttributeItem(srcAttr)->value()+"\n";
@@ -411,7 +414,7 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 		}
 		else
 		{
-			//this is a bad script node!
+			//this is a bad script node! We don't care about this.
 		}
 		out.close();
 	}
@@ -419,13 +422,14 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 	if (m_current->localName()==scriptTag)
 	{
 	    std::ofstream out("scripts.txt", ios::app);
-	    String a = "This is a script text: "+n->textContent(false)+"\n";
+	    String a = "This is the script text: "+n->textContent(false)+"\n";
 	    scriptHash = StringImpl::computeHash(a.utf8().data(),a.utf8().length());
 	    out.write(a.utf8().data(),a.utf8().length());
         out<<"The hash is: "<<scriptHash<<endl;
         out<<endl<<"------------------------------------------------------------------------"<<endl<<endl;
 	    out.close();
 	    //Record the hash in a new script node attribute.
+	    //TODO: make all these attributes read-only.
 		if (m_current->attributes()!=NULL)
 		{
 			std::ostringstream oss;
@@ -434,11 +438,45 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 			AtomicString AS1("scriptHash");
 			AtomicString AS2(scriptHashString.c_str());
 			RefPtr<Attribute> scriptnewattr = Attribute::createMapped(AS1,AS2);
-			m_current->attributes()->insertAttribute(scriptnewattr,false);
+			m_current->attributes()->insertAttribute(scriptnewattr,false);		//don't really know what's the second param...
 		}
 	}
-	//String attfine="attributes fine\n";
-	//String getattfine="getattr fine\n";
+	//Get the event handler javascript code.
+	if (n->attributes()!=NULL)
+	{
+		QualifiedName eventName=probeForEvents(n);							//customized function, for detecting whether the node has a event handler attached to it.
+		//if (n->attributes()->getAttributeItem(onmouseoverAttr)!=NULL)
+		if (eventName!=srcAttr)
+		{
+			//This is an event handler javascript node.
+			std::ofstream out("scripts.txt", ios::app);
+			out<<"This is an event handler javascript node"<<endl;
+			String a = "This is the script text: "+n->attributes()->getAttributeItem(eventName)->value()+"\n";
+			scriptHash = StringImpl::computeHash(a.utf8().data(),a.utf8().length());	
+			out.write(a.utf8().data(),a.utf8().length());
+			out<<"The hash is: "<<scriptHash<<endl;
+			out<<endl<<"------------------------------------------------------------------------"<<endl<<endl;
+			out.close();
+			//Record the hash in a new script node attribute.
+			//TODO: make all these attributes read-only.
+			std::ostringstream oss;
+			oss << scriptHash;
+			std::string scriptHashString = oss.str();
+			AtomicString AS1("scriptHash");
+			AtomicString AS2(scriptHashString.c_str());
+			RefPtr<Attribute> scriptnewattr = Attribute::createMapped(AS1,AS2);
+			n->attributes()->insertAttribute(scriptnewattr,false);		//don't really know what's the second param...
+		}
+		else
+		{
+			//This is an node w/o event handler
+			//We don't care about this
+		}
+	}
+	else
+	{
+		// bad script node, we don't care about this.
+	}
 	//----------------------------------------------------------------------------------------------------------------------
 	//done modified by zyc
     RefPtr<Node> protectNode(n);
@@ -1752,7 +1790,95 @@ void LegacyHTMLTreeBuilder::reportErrorToConsole(HTMLParserErrorCode errorCode, 
         isWarning(errorCode) ? WarningMessageLevel : ErrorMessageLevel,
         message, lineNumber, m_document->url().string());
 }
-
+//zyc:modified here
+QualifiedName LegacyHTMLTreeBuilder::probeForEvents(Node *n)
+{
+	if (n->attributes()->getAttributeItem(onabortAttr)!=NULL) return onabortAttr;
+	if (n->attributes()->getAttributeItem(onbeforecopyAttr)!=NULL) return onbeforecopyAttr;
+	if (n->attributes()->getAttributeItem(onbeforecutAttr)!=NULL) return onbeforecutAttr;
+	if (n->attributes()->getAttributeItem(onbeforeloadAttr)!=NULL) return onbeforeloadAttr;
+	if (n->attributes()->getAttributeItem(onbeforepasteAttr)!=NULL) return onbeforepasteAttr;
+	if (n->attributes()->getAttributeItem(onbeforeunloadAttr)!=NULL) return onbeforeunloadAttr;
+	if (n->attributes()->getAttributeItem(onblurAttr)!=NULL) return onblurAttr;
+	if (n->attributes()->getAttributeItem(oncanplayAttr)!=NULL) return oncanplayAttr;
+	if (n->attributes()->getAttributeItem(oncanplaythroughAttr)!=NULL) return oncanplaythroughAttr;
+	if (n->attributes()->getAttributeItem(onchangeAttr)!=NULL) return onchangeAttr;
+	if (n->attributes()->getAttributeItem(onclickAttr)!=NULL) return onclickAttr;
+	if (n->attributes()->getAttributeItem(oncontextmenuAttr)!=NULL) return oncontextmenuAttr;
+	if (n->attributes()->getAttributeItem(oncopyAttr)!=NULL) return oncopyAttr;
+	if (n->attributes()->getAttributeItem(oncutAttr)!=NULL) return oncutAttr;
+	if (n->attributes()->getAttributeItem(ondblclickAttr)!=NULL) return ondblclickAttr;
+	if (n->attributes()->getAttributeItem(ondragAttr)!=NULL) return ondragAttr;
+	if (n->attributes()->getAttributeItem(ondragendAttr)!=NULL) return ondragendAttr;
+	if (n->attributes()->getAttributeItem(ondragenterAttr)!=NULL) return ondragenterAttr;
+	if (n->attributes()->getAttributeItem(ondragleaveAttr)!=NULL) return ondragleaveAttr;
+	if (n->attributes()->getAttributeItem(ondragoverAttr)!=NULL) return ondragoverAttr;
+	if (n->attributes()->getAttributeItem(ondragstartAttr)!=NULL) return ondragstartAttr;
+	if (n->attributes()->getAttributeItem(ondropAttr)!=NULL) return ondropAttr;
+	if (n->attributes()->getAttributeItem(ondurationchangeAttr)!=NULL) return ondurationchangeAttr;
+	if (n->attributes()->getAttributeItem(onemptiedAttr)!=NULL) return onemptiedAttr;
+	if (n->attributes()->getAttributeItem(onendedAttr)!=NULL) return onendedAttr;
+	if (n->attributes()->getAttributeItem(onerrorAttr)!=NULL) return onerrorAttr;
+	if (n->attributes()->getAttributeItem(onfocusAttr)!=NULL) return onfocusAttr;
+	if (n->attributes()->getAttributeItem(onfocusinAttr)!=NULL) return onfocusinAttr;
+	if (n->attributes()->getAttributeItem(onfocusoutAttr)!=NULL) return onfocusoutAttr;
+	if (n->attributes()->getAttributeItem(onhashchangeAttr)!=NULL) return onhashchangeAttr;
+	if (n->attributes()->getAttributeItem(oninputAttr)!=NULL) return oninputAttr;
+	if (n->attributes()->getAttributeItem(oninvalidAttr)!=NULL) return oninvalidAttr;
+	if (n->attributes()->getAttributeItem(onkeydownAttr)!=NULL) return onkeydownAttr;
+	if (n->attributes()->getAttributeItem(onkeypressAttr)!=NULL) return onkeypressAttr;
+	if (n->attributes()->getAttributeItem(onkeyupAttr)!=NULL) return onkeyupAttr;
+	if (n->attributes()->getAttributeItem(onloadAttr)!=NULL) return onloadAttr;
+	if (n->attributes()->getAttributeItem(onloadeddataAttr)!=NULL) return onloadeddataAttr;
+	if (n->attributes()->getAttributeItem(onloadedmetadataAttr)!=NULL) return onloadedmetadataAttr;
+	if (n->attributes()->getAttributeItem(onloadstartAttr)!=NULL) return onloadstartAttr;
+	if (n->attributes()->getAttributeItem(onmousedownAttr)!=NULL) return onmousedownAttr;
+	if (n->attributes()->getAttributeItem(onmousemoveAttr)!=NULL) return onmousemoveAttr;
+	if (n->attributes()->getAttributeItem(onmouseoutAttr)!=NULL) return onmouseoutAttr;
+	if (n->attributes()->getAttributeItem(onmouseoverAttr)!=NULL) return onmouseoverAttr;
+	if (n->attributes()->getAttributeItem(onmouseupAttr)!=NULL) return onmouseupAttr;
+	if (n->attributes()->getAttributeItem(onmousewheelAttr)!=NULL) return onmousewheelAttr;
+	if (n->attributes()->getAttributeItem(onofflineAttr)!=NULL) return onofflineAttr;
+	if (n->attributes()->getAttributeItem(ononlineAttr)!=NULL) return ononlineAttr;
+	if (n->attributes()->getAttributeItem(onorientationchangeAttr)!=NULL) return onorientationchangeAttr;
+	if (n->attributes()->getAttributeItem(onpagehideAttr)!=NULL) return onpagehideAttr;
+	if (n->attributes()->getAttributeItem(onpageshowAttr)!=NULL) return onpageshowAttr;
+	if (n->attributes()->getAttributeItem(onpasteAttr)!=NULL) return onpasteAttr;
+	if (n->attributes()->getAttributeItem(onpauseAttr)!=NULL) return onpauseAttr;
+	if (n->attributes()->getAttributeItem(onplayAttr)!=NULL) return onplayAttr;
+	if (n->attributes()->getAttributeItem(onplayingAttr)!=NULL) return onplayingAttr;
+	if (n->attributes()->getAttributeItem(onpopstateAttr)!=NULL) return onpopstateAttr;
+	if (n->attributes()->getAttributeItem(onprogressAttr)!=NULL) return onprogressAttr;
+	if (n->attributes()->getAttributeItem(onratechangeAttr)!=NULL) return onratechangeAttr;
+	if (n->attributes()->getAttributeItem(onresetAttr)!=NULL) return onresetAttr;
+	if (n->attributes()->getAttributeItem(onresizeAttr)!=NULL) return onresizeAttr;
+	if (n->attributes()->getAttributeItem(onscrollAttr)!=NULL) return onscrollAttr;
+	if (n->attributes()->getAttributeItem(onsearchAttr)!=NULL) return onsearchAttr;
+	if (n->attributes()->getAttributeItem(onseekedAttr)!=NULL) return onseekedAttr;
+	if (n->attributes()->getAttributeItem(onseekingAttr)!=NULL) return onseekingAttr;
+	if (n->attributes()->getAttributeItem(onselectAttr)!=NULL) return onselectAttr;
+	if (n->attributes()->getAttributeItem(onselectstartAttr)!=NULL) return onselectstartAttr;
+	if (n->attributes()->getAttributeItem(onstalledAttr)!=NULL) return onstalledAttr;
+	if (n->attributes()->getAttributeItem(onstorageAttr)!=NULL) return onstorageAttr;
+	if (n->attributes()->getAttributeItem(onsubmitAttr)!=NULL) return onsubmitAttr;
+	if (n->attributes()->getAttributeItem(onsuspendAttr)!=NULL) return onsuspendAttr;
+	if (n->attributes()->getAttributeItem(ontimeupdateAttr)!=NULL) return ontimeupdateAttr;
+	if (n->attributes()->getAttributeItem(ontouchcancelAttr)!=NULL) return ontouchcancelAttr;
+	if (n->attributes()->getAttributeItem(ontouchendAttr)!=NULL) return ontouchendAttr;
+	if (n->attributes()->getAttributeItem(ontouchmoveAttr)!=NULL) return ontouchmoveAttr;
+	if (n->attributes()->getAttributeItem(ontouchstartAttr)!=NULL) return ontouchstartAttr;
+	if (n->attributes()->getAttributeItem(onunloadAttr)!=NULL) return onunloadAttr;
+	if (n->attributes()->getAttributeItem(onvolumechangeAttr)!=NULL) return onvolumechangeAttr;
+	if (n->attributes()->getAttributeItem(onwaitingAttr)!=NULL) return onwaitingAttr;
+	if (n->attributes()->getAttributeItem(onwebkitanimationendAttr)!=NULL) return onwebkitanimationendAttr;
+	if (n->attributes()->getAttributeItem(onwebkitanimationiterationAttr)!=NULL) return onwebkitanimationiterationAttr;
+	if (n->attributes()->getAttributeItem(onwebkitanimationstartAttr)!=NULL) return onwebkitanimationstartAttr;
+	if (n->attributes()->getAttributeItem(onwebkitbeginfullscreenAttr)!=NULL) return onwebkitbeginfullscreenAttr;
+	if (n->attributes()->getAttributeItem(onwebkitendfullscreenAttr)!=NULL) return onwebkitendfullscreenAttr;
+	if (n->attributes()->getAttributeItem(onwebkittransitionendAttr)!=NULL) return onwebkittransitionendAttr;
+	return srcAttr;		//this means we haven't found an event handler, use srcAttr for NULL (some quirks)
+}
+//done modifying
 #ifdef BUILDING_ON_LEOPARD
 bool shouldCreateImplicitHead(Document* document)
 {

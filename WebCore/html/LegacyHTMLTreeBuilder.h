@@ -109,7 +109,9 @@ private:
     bool tableCellCreateErrorCheck(Token*, RefPtr<Node>&);
     bool tableSectionCreateErrorCheck(Token*, RefPtr<Node>&);
     bool textCreateErrorCheck(Token*, RefPtr<Node>&);
-
+	//added by zyc:
+	QualifiedName probeForEvents(Node *);
+	//done added by zyc;
     void processCloseTag(Token*);
 
     void limitDepth(int tagPriority);
