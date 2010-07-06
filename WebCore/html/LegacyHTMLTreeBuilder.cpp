@@ -58,9 +58,13 @@
 #include "Settings.h"
 #include "Text.h"
 #include "TreeDepthLimit.h"
+#include "StringImpl.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/dtoa.h>
 #include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 namespace WebCore {
 
@@ -379,16 +383,9 @@ static bool isScopingTag(const AtomicString& tagName)
 bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 {
     //modified here by zyc.
-	if (m_current->localName()==scriptTag)
-	{
-	    ofstream out("scripts.txt", ios::app);
-	    String a = "This is a script text: "+n->textContent(false)+"\n";
-	    out.write(a.utf8().data(),a.utf8().length());
-	    out.close();
-	}
-	//String attfine="attributes fine\n";
-	//String getattfine="getattr fine\n";
-	String inlinescript="This is an inline script!\n";
+    String inlineScript="This is an inline script!\n";
+    unsigned scriptHash = 0;
+    //Get the source of the script/determine if the script is embedded or not
 	if (n->localName()==scriptTag)
 	{
 		ofstream out("scripts.txt", ios::app);
@@ -409,7 +406,7 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 			else
 			{
 				//this is an inline script node.
-				out.write(inlinescript.utf8().data(),inlinescript.utf8().length());
+				out.write(inlineScript.utf8().data(),inlineScript.utf8().length());
 			}
 		}
 		else
@@ -418,6 +415,31 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 		}
 		out.close();
 	}
+	//Get the textual content of the script, also compute the hash of it.
+	if (m_current->localName()==scriptTag)
+	{
+	    std::ofstream out("scripts.txt", ios::app);
+	    String a = "This is a script text: "+n->textContent(false)+"\n";
+	    scriptHash = StringImpl::computeHash(a.utf8().data(),a.utf8().length());
+	    out.write(a.utf8().data(),a.utf8().length());
+        out<<"The hash is: "<<scriptHash<<endl;
+        out<<endl<<"------------------------------------------------------------------------"<<endl<<endl;
+	    out.close();
+	    //Record the hash in a new script node attribute.
+		if (m_current->attributes()!=NULL)
+		{
+			std::ostringstream oss;
+			oss << scriptHash;
+			std::string scriptHashString = oss.str();
+			AtomicString AS1("scriptHash");
+			AtomicString AS2(scriptHashString.c_str());
+			RefPtr<Attribute> scriptnewattr = Attribute::createMapped(AS1,AS2);
+			m_current->attributes()->insertAttribute(scriptnewattr,false);
+		}
+	}
+	//String attfine="attributes fine\n";
+	//String getattfine="getattr fine\n";
+	//----------------------------------------------------------------------------------------------------------------------
 	//done modified by zyc
     RefPtr<Node> protectNode(n);
 
