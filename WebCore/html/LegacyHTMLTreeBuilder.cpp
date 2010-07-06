@@ -465,7 +465,11 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 			AtomicString AS1("scriptHash");
 			AtomicString AS2(scriptHashString.c_str());
 			RefPtr<Attribute> scriptnewattr = Attribute::createMapped(AS1,AS2);
-			n->attributes()->insertAttribute(scriptnewattr,false);		//don't really know what's the second param...
+			n->attributes()->insertAttribute(scriptnewattr,false);		
+			//TODO: This is tricky: We are not adding the attribute to the script itself, but the node that has the event handler attached to it.
+			//What if it has multiple event handlers? This won't work. Besides, adding the attribute to the node doesn't make any sense,
+			//Since the js gets executed as an attribute, we should tie the hash to that attribute!
+			//We need to investigate on this later when we are at step 3.
 		}
 		else
 		{
