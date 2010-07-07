@@ -429,7 +429,6 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
         out<<endl<<"------------------------------------------------------------------------"<<endl<<endl;
 	    out.close();
 	    //Record the hash in a new script node attribute.
-	    //TODO: make all these attributes read-only.
 		if (m_current->attributes()!=NULL)
 		{
 			std::ostringstream oss;
@@ -458,7 +457,6 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 			out<<endl<<"------------------------------------------------------------------------"<<endl<<endl;
 			out.close();
 			//Record the hash in a new script node attribute.
-			//TODO: make all these attributes read-only.
 			std::ostringstream oss;
 			oss << scriptHash;
 			std::string scriptHashString = oss.str();
