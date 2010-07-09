@@ -53,6 +53,8 @@
 #include "XSSAuditor.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/CurrentTime.h>
+#include <fstream>
+#include <iostream>
 
 #include "HTMLEntityNames.cpp"
 
@@ -259,7 +261,10 @@ void LegacyHTMLDocumentParser::begin()
     m_currentScriptTagStartLineNumber = 0;
     m_currentTagStartLineNumber = 0;
     m_state.setForceSynchronous(false);
-
+    
+    ofstream out("parser.txt", ios::app);
+    out<<"This is from old parser"<<endl;
+    
     Page* page = document()->page();
     if (page && page->hasCustomHTMLTokenizerTimeDelay())
         m_tokenizerTimeDelay = page->customHTMLTokenizerTimeDelay();

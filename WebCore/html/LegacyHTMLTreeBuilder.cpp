@@ -254,6 +254,8 @@ inline bool LegacyHTMLTreeBuilder::insertNodeAfterLimitDepth(Node* n, bool flat)
 
 PassRefPtr<Node> LegacyHTMLTreeBuilder::parseToken(Token* t)
 {
+	//ofstream out("token.txt", ios::app);
+    //out<<"This is from old token inserter"<<endl;
     if (!m_skipModeTag.isNull()) {
         if (!t->beginTag && t->tagName == m_skipModeTag)
             // Found the end tag for the current skip mode, so we're done skipping.

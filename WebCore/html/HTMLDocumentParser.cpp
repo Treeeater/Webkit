@@ -37,12 +37,16 @@
 #include "HTMLDocument.h"
 #include "XSSAuditor.h"
 #include <wtf/CurrentTime.h>
+#include <fstream>
+#include <iostream>
 
 #if ENABLE(INSPECTOR)
 #include "InspectorTimelineAgent.h"
 #endif
 
 namespace WebCore {
+	
+using namespace std;
 
 namespace {
 
@@ -100,6 +104,8 @@ HTMLDocumentParser::~HTMLDocumentParser()
 void HTMLDocumentParser::begin()
 {
     // FIXME: Should we reset the tokenizer?
+    //ofstream out("parser.txt", ios::app);
+    //out<<"This is from new parser"<<endl;
 }
 
 void HTMLDocumentParser::stopParsing()
