@@ -47,6 +47,8 @@
 #include <runtime/InitializeThreading.h>
 #include <runtime/JSLock.h>
 #include <wtf/Threading.h>
+#include <iostream>
+#include <fstream>
 
 using namespace JSC;
 using namespace std;
@@ -118,6 +120,12 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
 
 ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world, ShouldAllowXSS shouldAllowXSS)
 {
+	//zyc
+    ofstream out("fromScriptController.txt", ios::app);
+    String output = sourceCode.source()+"\n";
+    out.write(output.utf8().data(),output.utf8().length());
+    out.close();
+    //done zyc
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
     String sourceURL = ustringToString(jsSourceCode.provider()->url());
 

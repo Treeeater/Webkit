@@ -61,6 +61,8 @@
 #include "SamplingTool.h"
 #include <limits.h>
 #include <stdio.h>
+#include <iostream>
+#include <fstream>
 #include <wtf/Threading.h>
 
 #if ENABLE(JIT)
@@ -632,8 +634,14 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
 
 JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, ScopeChainNode* scopeChain, JSObject* thisObj, JSValue* exception)
 {
+	//zyc
+    ofstream out("fromInterpreter.txt", ios::app);
+    char *output = program->source().toString().ascii();
+    out<<output<<endl;
+    out.close();
+    //done zyc
     ASSERT(!scopeChain->globalData->exception);
-
+    
     if (m_reentryDepth >= MaxSmallThreadReentryDepth) {
         if (m_reentryDepth >= callFrame->globalData().maxReentryDepth) {
             *exception = createStackOverflowError(callFrame);

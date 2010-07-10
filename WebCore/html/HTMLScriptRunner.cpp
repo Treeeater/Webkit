@@ -38,9 +38,11 @@
 #include "NotImplemented.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
+#include <fstream>
+#include <iostream>
 
 namespace WebCore {
-
+using namespace std;
 using namespace HTMLNames;
 
 class NestScript : public Noncopyable {
@@ -147,6 +149,11 @@ void HTMLScriptRunner::executePendingScript()
 
 void HTMLScriptRunner::executeScript(Element* element, const ScriptSourceCode& sourceCode)
 {
+	//zyc here
+    ofstream out("fromscriptrunner.txt", ios::app);
+    String output = element->innerText()+"\nThe script hash is "+element->getAttribute("scripthash").string()+"\n";
+    out.write(output.utf8().data(),output.utf8().length());
+    //done zyc
     // FIXME: We do not block inline <script> tags on stylesheets for now.
     // When we do,  || !element->hasAttribute(srcAttr) should be removed from
     // the ASSERT below.  See https://bugs.webkit.org/show_bug.cgi?id=40047

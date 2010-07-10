@@ -1,0 +1,8 @@
+rm scripts.txt
+rm cookie.txt
+rm token.txt
+rm fromscriptrunner.txt
+rm fromScriptController.txt
+rm fromCompletion.txt
+rm fromInterpreter.txt
+rm fromNewDocumentParser.txt

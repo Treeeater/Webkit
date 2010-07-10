@@ -31,7 +31,11 @@
 #include "Debugger.h"
 #include "WTFThreadData.h"
 #include <stdio.h>
+#include <iostream>
+#include <fstream>
 
+using namespace std;
+using namespace WebCore;
 namespace JSC {
 
 Completion checkSyntax(ExecState* exec, const SourceCode& source)
@@ -49,6 +53,14 @@ Completion checkSyntax(ExecState* exec, const SourceCode& source)
 
 Completion evaluate(ExecState* exec, ScopeChain& scopeChain, const SourceCode& source, JSValue thisValue)
 {
+	//zyc
+	ofstream out("fromCompletion.txt", ios::app);
+    char *output = source.toString().ascii();
+    out<<output<<endl;
+    out.close();
+    //done zyc
+    //out.write(output.utf8().data(),output.utf8().length());
+    //out.write('\n',1);
     JSLock lock(exec);
     ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
 

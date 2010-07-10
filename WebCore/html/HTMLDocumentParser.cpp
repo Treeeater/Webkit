@@ -104,6 +104,7 @@ HTMLDocumentParser::~HTMLDocumentParser()
 void HTMLDocumentParser::begin()
 {
     // FIXME: Should we reset the tokenizer?
+    //zyc:
     //ofstream out("parser.txt", ios::app);
     //out<<"This is from new parser"<<endl;
 }
@@ -155,6 +156,12 @@ bool HTMLDocumentParser::runScriptsForPausedTreeBuilder()
     // We will not have a scriptRunner when parsing a DocumentFragment.
     if (!m_scriptRunner)
         return true;
+    //zyc:
+    ofstream out("fromNewDocumentParser.txt", ios::app);
+    String text = scriptElement->innerText()+"\n";
+    out.write(text.utf8().data(),text.utf8().length());
+    out.close();
+    //script runs here:
     return m_scriptRunner->execute(scriptElement.release(), scriptStartLine);
 }
 
@@ -173,7 +180,8 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     while (mode == ForceSynchronous || (!m_parserStopped && m_parserScheduler->shouldContinueParsing(session))) {
         if (!m_tokenizer->nextToken(m_input.current(), m_token))
             break;
-
+		//zyc:
+		//here it builds the DOM tree.
         m_treeBuilder->constructTreeFromToken(m_token);
         m_token.clear();
 
@@ -182,6 +190,8 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
             continue;
 
         // If we're paused waiting for a script, we try to execute scripts before continuing.
+        //zyc:
+        // here the script runs.
         bool shouldContinueParsing = runScriptsForPausedTreeBuilder();
         m_treeBuilder->setPaused(!shouldContinueParsing);
         if (!shouldContinueParsing)
