@@ -138,7 +138,7 @@ public:
     Node* parentNode() const { return parent(); }
     Element* parentElement() const;
     Node* previousSibling() const { return m_previous; }
-    Node* nextSibling() const { return m_next; }
+    Node* nextSibling() const;// const { return m_next; }
     PassRefPtr<NodeList> childNodes();
     Node* firstChild() const { return isContainerNode() ? containerFirstChild() : 0; }
     Node* lastChild() const { return isContainerNode() ? containerLastChild() : 0; }
