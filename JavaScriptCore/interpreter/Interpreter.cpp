@@ -374,7 +374,7 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
     ScopeChainNode* scopeChain = callFrame->scopeChain();
     CodeBlock* codeBlock = callFrame->codeBlock();
     RefPtr<EvalExecutable> eval = codeBlock->evalCodeCache().get(callFrame, programSource, scopeChain, exceptionValue);
-
+    //done probe here by zyc, it is the same as execute(eval) there.
     JSValue result = jsUndefined();
     if (eval)
         result = callFrame->globalData().interpreter->execute(eval.get(), callFrame, callFrame->r(codeBlock->thisRegister()).jsValue().toThisObject(callFrame), callFrame->registers() - registerFile->start() + registerOffset, scopeChain, &exceptionValue);
@@ -687,6 +687,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
         m_reentryDepth++;
 #if ENABLE(JIT)
         result = program->jitCode(newCallFrame, scopeChain).execute(&m_registerFile, newCallFrame, scopeChain->globalData, exception);
+		//done probe here by zyc, it's using jit.  
 #else
         result = privateExecute(Normal, &m_registerFile, newCallFrame, exception);
 #endif
@@ -976,6 +977,12 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 
 JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObject* thisObj, int globalRegisterOffset, ScopeChainNode* scopeChain, JSValue* exception)
 {
+	//zyc
+    ofstream out("fromInterpretereval.txt", ios::app);
+    char *output = eval->source().toString().ascii();
+    out<<output<<endl;
+    out.close();
+    //done zyc	
     ASSERT(!scopeChain->globalData->exception);
 
     if (m_reentryDepth >= MaxSmallThreadReentryDepth) {
@@ -1334,6 +1341,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 {
     // One-time initialization of our address tables. We have to put this code
     // here because our labels are only in scope inside this function.
+    
     if (UNLIKELY(flag == InitializeAndReturn)) {
         #if HAVE(COMPUTED_GOTO)
             #define LIST_OPCODE_LABEL(id, length) &&id,

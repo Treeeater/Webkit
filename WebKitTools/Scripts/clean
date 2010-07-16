@@ -5,5 +5,7 @@ rm fromscriptrunner.txt
 rm fromScriptController.txt
 rm fromCompletion.txt
 rm fromInterpreter.txt
+rm fromInterpretereval.txt
 rm fromNewDocumentParser.txt
 rm fromNode.txt
+rm fromCallData.txt

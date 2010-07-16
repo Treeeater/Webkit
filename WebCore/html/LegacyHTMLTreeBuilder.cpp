@@ -384,6 +384,7 @@ static bool isScopingTag(const AtomicString& tagName)
 
 bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 {
+	/*
     //modified here by zyc.
     //TODO: All the file output are just for debugging purposes.
     //TODO: Should remove all file output when done editing.
@@ -483,6 +484,7 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 	}
 	//----------------------------------------------------------------------------------------------------------------------
 	//done modified by zyc
+	*/
     RefPtr<Node> protectNode(n);
 
     const AtomicString& localName = n->localName();

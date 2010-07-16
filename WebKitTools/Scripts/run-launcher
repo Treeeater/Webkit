@@ -55,8 +55,10 @@ if (isQt()) {
     if (isDarwin()) {
         $ENV{DYLD_LIBRARY_PATH} = $ENV{DYLD_LIBRARY_PATH} ? "$libDir:$ENV{DYLD_LIBRARY_PATH}" : $libDir;
         $ENV{DYLD_FRAMEWORK_PATH} = $ENV{DYLD_FRAMEWORK_PATH} ? "$libDir:$ENV{DYLD_FRAMEWORK_PATH}" : $libDir;
+	print "This is from Darwin()\n";
     } else {
         $ENV{LD_LIBRARY_PATH} = $ENV{LD_LIBRARY_PATH} ? "$libDir:$ENV{LD_LIBRARY_PATH}" : $libDir;
+	print "This is not from Darwin()\n";
     }
 } else {
 

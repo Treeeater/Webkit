@@ -31,6 +31,12 @@
 #include <wtf/MainThread.h>
 #endif
 #include <wtf/Noncopyable.h>
+#include <fstream>
+#include <iostream>
+#include "CallData.h"
+#include "Executable.h"
+
+using namespace std;
 
 namespace WebCore {
 
@@ -45,6 +51,10 @@ public:
     static JSC::JSValue call(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args)
     {
         JSMainThreadExecState currentState(exec);
+	ofstream out("fromCallData.txt", ios::app);
+	char *toprint = callData.js.functionExecutable->source().toString().ascii();
+    	out<<toprint<<endl<<"----------------"<<endl;
+    	out.close();
         return JSC::call(exec, functionObject, callType, callData, thisValue, args);
     };
 
