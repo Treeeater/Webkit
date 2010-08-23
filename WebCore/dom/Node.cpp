@@ -504,12 +504,13 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 //zyc
 Node* Node::nextSibling() const
 {
+	/*
 	if (m_next)
 	{
         ofstream out("fromNode.txt", ios::app);
 		String a = m_next->nodeName()+" is "+m_next->nodeValue()+"\n";
 		out.write(a.utf8().data(),a.utf8().length());
-	}
+	}*/
 	return m_next; 
 }
 

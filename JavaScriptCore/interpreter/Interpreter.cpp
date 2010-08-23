@@ -635,10 +635,11 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
 JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, ScopeChainNode* scopeChain, JSObject* thisObj, JSValue* exception)
 {
 	//zyc
+	/*
     ofstream out("fromInterpreter.txt", ios::app);
     char *output = program->source().toString().ascii();
     out<<output<<endl;
-    out.close();
+    out.close();*/
     //done zyc
     ASSERT(!scopeChain->globalData->exception);
     
@@ -978,10 +979,11 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObject* thisObj, int globalRegisterOffset, ScopeChainNode* scopeChain, JSValue* exception)
 {
 	//zyc
+	/*
     ofstream out("fromInterpretereval.txt", ios::app);
     char *output = eval->source().toString().ascii();
     out<<output<<endl;
-    out.close();
+    out.close();*/
     //done zyc	
     ASSERT(!scopeChain->globalData->exception);
 

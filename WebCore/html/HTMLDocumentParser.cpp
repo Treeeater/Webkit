@@ -157,10 +157,12 @@ bool HTMLDocumentParser::runScriptsForPausedTreeBuilder()
     if (!m_scriptRunner)
         return true;
     //zyc:
+    /*
     ofstream out("fromNewDocumentParser.txt", ios::app);
     String text = scriptElement->innerText()+"\n";
     out.write(text.utf8().data(),text.utf8().length());
-    out.close();
+    out.close();*/
+    //done zyc
     //script runs here:
     return m_scriptRunner->execute(scriptElement.release(), scriptStartLine);
 }

@@ -54,10 +54,11 @@ Completion checkSyntax(ExecState* exec, const SourceCode& source)
 Completion evaluate(ExecState* exec, ScopeChain& scopeChain, const SourceCode& source, JSValue thisValue)
 {
 	//zyc
+	/*
 	ofstream out("fromCompletion.txt", ios::app);
     char *output = source.toString().ascii();
     out<<output<<endl;
-    out.close();
+    out.close();*/
     //done zyc
     //out.write(output.utf8().data(),output.utf8().length());
     //out.write('\n',1);

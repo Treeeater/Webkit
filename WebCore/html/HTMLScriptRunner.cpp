@@ -150,9 +150,9 @@ void HTMLScriptRunner::executePendingScript()
 void HTMLScriptRunner::executeScript(Element* element, const ScriptSourceCode& sourceCode)
 {
 	//zyc here
-    ofstream out("fromscriptrunner.txt", ios::app);
+    /*ofstream out("fromscriptrunner.txt", ios::app);
     String output = element->innerText()+"\nThe script hash is "+element->getAttribute("scripthash").string()+"\n";
-    out.write(output.utf8().data(),output.utf8().length());
+    out.write(output.utf8().data(),output.utf8().length());*/
     //done zyc
     // FIXME: We do not block inline <script> tags on stylesheets for now.
     // When we do,  || !element->hasAttribute(srcAttr) should be removed from

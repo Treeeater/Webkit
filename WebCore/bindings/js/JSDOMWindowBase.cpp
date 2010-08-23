@@ -67,7 +67,11 @@ void JSDOMWindowBase::updateDocument()
 {
     ASSERT(d()->impl->document());
     ExecState* exec = globalExec();
+    //zyc
+    //Node *DOC = d()->impl->document()->firstChild();
+    //symbolTablePutWithAttributes(Identifier(exec, "document"), toJS(exec, this, DOC), DontDelete | ReadOnly);
     symbolTablePutWithAttributes(Identifier(exec, "document"), toJS(exec, this, d()->impl->document()), DontDelete | ReadOnly);
+    //end zyc
 }
 
 ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
