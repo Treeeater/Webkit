@@ -103,7 +103,7 @@ public:
 
     static void getAllWorlds(Vector<DOMWrapperWorld*>&);
 
-    ScriptValue executeScript(const ScriptSourceCode&, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
+    ScriptValue executeScript(const ScriptSourceCode&, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS, String shouldExecuteInIsolatedWorld = "");
     ScriptValue executeScript(const String& script, bool forceUserGesture = false, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
     ScriptValue executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture = false, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
 
@@ -114,7 +114,7 @@ public:
     // Darwin is an exception to this rule: it is OK to call this function from any thread, even reentrantly.
     static void initializeThreading();
 
-    ScriptValue evaluate(const ScriptSourceCode&, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
+    ScriptValue evaluate(const ScriptSourceCode&, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS, String shouldExecuteInIsolatedWorld="");
     ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
 
     int eventHandlerLineNumber() const;
@@ -183,7 +183,10 @@ private:
     void disconnectPlatformScriptObjects();
 
     bool isJavaScriptAnchorNavigation() const;
-
+	//zyc
+	typedef HashMap <String, RefPtr<DOMWrapperWorld> > MapWorld;
+	MapWorld m_allWorlds;
+	//done zyc
     ShellMap m_windowShells;
     Frame* m_frame;
     const String* m_sourceURL;

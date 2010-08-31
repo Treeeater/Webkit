@@ -180,9 +180,23 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     return JSValue();
 }
 
-ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ShouldAllowXSS shouldAllowXSS) 
+ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ShouldAllowXSS shouldAllowXSS, String shouldExecuteInIsolatedWorld) 
 {
-    return evaluateInWorld(sourceCode, mainThreadNormalWorld(), shouldAllowXSS);
+	if ((shouldExecuteInIsolatedWorld!=NULL)&&(shouldExecuteInIsolatedWorld!=""))
+	{
+		if (m_allWorlds.contains(shouldExecuteInIsolatedWorld))
+		{
+			return evaluateInWorld(sourceCode, m_allWorlds.get(shouldExecuteInIsolatedWorld).get(), shouldAllowXSS);
+		}
+		else
+		{
+			RefPtr<DOMWrapperWorld> world = createWorld();
+			m_allWorlds.add(shouldExecuteInIsolatedWorld,world);
+			ScriptValue result = evaluateInWorld(sourceCode,world.get(), shouldAllowXSS);
+			return result;
+		}
+	}
+	else return evaluateInWorld(sourceCode, mainThreadNormalWorld(), shouldAllowXSS);
 }
 
 PassRefPtr<DOMWrapperWorld> ScriptController::createWorld()
