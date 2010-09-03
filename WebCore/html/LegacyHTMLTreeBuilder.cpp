@@ -384,7 +384,7 @@ static bool isScopingTag(const AtomicString& tagName)
 
 bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 {
-	/*
+	
     //modified here by zyc.
     //TODO: All the file output are just for debugging purposes.
     //TODO: Should remove all file output when done editing.
@@ -392,6 +392,7 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
     String inlineScript="This is an inline script!\n";
     unsigned scriptHash = 0;
     //Get the source of the script/determine if the script is embedded or inline
+    /*
 	if (n->localName()==scriptTag)
 	{
 		ofstream out("scripts.txt", ios::app);
@@ -421,16 +422,17 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 		}
 		out.close();
 	}
+	*/
 	//Get the textual content of the script, also compute the hash of it.
 	if (m_current->localName()==scriptTag)
 	{
-	    std::ofstream out("scripts.txt", ios::app);
-	    String a = "This is the script text: "+n->textContent(false)+"\n";
+	    //std::ofstream out("scripts.txt", ios::app);
+	    String a = n->textContent(false);
 	    scriptHash = StringImpl::computeHash(a.utf8().data(),a.utf8().length());
-	    out.write(a.utf8().data(),a.utf8().length());
-        out<<"The hash is: "<<scriptHash<<endl;
-        out<<endl<<"------------------------------------------------------------------------"<<endl<<endl;
-	    out.close();
+	    //out.write(a.utf8().data(),a.utf8().length());
+        //out<<"The hash is: "<<scriptHash<<endl;
+        //out<<endl<<"------------------------------------------------------------------------"<<endl<<endl;
+	    //out.close();
 	    //Record the hash in a new script node attribute.
 		if (m_current->attributes()!=NULL)
 		{
@@ -440,7 +442,7 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 			AtomicString AS1("scripthash");										//pay attention: this scripthash isn't scriptHash!
 			AtomicString AS2(scriptHashString.c_str());
 			RefPtr<Attribute> scriptnewattr = Attribute::createMapped(AS1,AS2,true);		//third param is associated with dom/Attribute.h, means read-only for the attribute.
-			m_current->attributes()->insertAttribute(scriptnewattr,true);		//don't really know what's the second param...
+			if (scriptnewattr) m_current->attributes()->addAttribute(scriptnewattr);		//don't really know what's the second param...
 		}
 	}
 	//Get the event handler javascript code.
@@ -451,14 +453,14 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 		if (eventName!=srcAttr)
 		{
 			//This is an event handler javascript node.
-			std::ofstream out("scripts.txt", ios::app);
-			out<<"This is an event handler javascript node"<<endl;
-			String a = "This is the script text: "+n->attributes()->getAttributeItem(eventName)->value()+"\n";
+			//std::ofstream out("scripts.txt", ios::app);
+			//out<<"This is an event handler javascript node"<<endl;
+			String a = n->attributes()->getAttributeItem(eventName)->value();
 			scriptHash = StringImpl::computeHash(a.utf8().data(),a.utf8().length());	
-			out.write(a.utf8().data(),a.utf8().length());
-			out<<"The hash is: "<<scriptHash<<endl;
-			out<<endl<<"------------------------------------------------------------------------"<<endl<<endl;
-			out.close();
+			//out.write(a.utf8().data(),a.utf8().length());
+			//out<<"The hash is: "<<scriptHash<<endl;
+			//out<<endl<<"------------------------------------------------------------------------"<<endl<<endl;
+			//out.close();
 			//Record the hash in a new script node attribute.
 			std::ostringstream oss;
 			oss << scriptHash;
@@ -466,7 +468,7 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 			AtomicString AS1("scripthash");										//pay attention: this scripthash isn't scriptHash!
 			AtomicString AS2(scriptHashString.c_str());
 			RefPtr<Attribute> scriptnewattr = Attribute::createMapped(AS1,AS2,true);		//third param is associated with dom/Attribute.h, means read-only for the attribute.
-			n->attributes()->insertAttribute(scriptnewattr,true);		
+			if (scriptnewattr) n->attributes()->addAttribute(scriptnewattr);		
 			//TODO: This is tricky: We are not adding the attribute to the script itself, but the node that has the event handler attached to it.
 			//What if it has multiple event handlers? This won't work. Besides, adding the attribute to the node doesn't make any sense,
 			//Since the js gets executed as an attribute, we should tie the hash to that attribute!
@@ -484,7 +486,7 @@ bool LegacyHTMLTreeBuilder::insertNode(Node* n, bool flat)
 	}
 	//----------------------------------------------------------------------------------------------------------------------
 	//done modified by zyc
-	*/
+
     RefPtr<Node> protectNode(n);
 
     const AtomicString& localName = n->localName();

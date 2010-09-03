@@ -49,12 +49,21 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
 {
     if (!node)
         return JSC::jsNull();
-    
-    if (node->isHTMLElement()&&(((Element*)node)->getAttribute("PI")=="true"))
+	bool allowaccess = true;
+    if (node->isHTMLElement())
     {
+		String scripthash = currentWorld(exec)->scriptId();
+		String nodeacl = ((Element*)node) -> getAttribute("ACL");
+		if ((nodeacl != NULL)&&(nodeacl != "")&&(!nodeacl.contains(scripthash)))
+		{
+			allowaccess = false;
+		}
+	}
+	if (allowaccess == false)
+	{		
 		return JSC::jsNull();
 	}
-	
+		
     JSNode* wrapper = getCachedDOMNodeWrapper(exec, node->document(), node);
     if (wrapper)
         return wrapper;

@@ -55,7 +55,7 @@ public:
     // FIXME: can we make this private?
     DOMObjectWrapperMap m_wrappers;
     JSStringCache m_stringCache;
-
+	String scriptId() const {return m_scriptId; }
     bool isNormal() const { return m_isNormal; }
 
 protected:

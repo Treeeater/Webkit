@@ -166,7 +166,7 @@ void HTMLScriptRunner::executeScript(Element* element, const ScriptSourceCode& s
     if (!m_document->frame())
         return;
     String shouldExecuteInIsolatedWorld = element->getAttribute("IW");
-    String scriptId = element->getAttribute("scriptid");
+    String scriptId = element->getAttribute("scripthash");				//zyc: If we don't want to use scripthash, put whatever else here and let the web developer add a new attribute to all script tags.
     if (!shouldExecuteInIsolatedWorld) shouldExecuteInIsolatedWorld="";
     if (!scriptId) scriptId="";
     m_document->frame()->script()->executeScript(sourceCode, (ShouldAllowXSS) false, shouldExecuteInIsolatedWorld, scriptId);
