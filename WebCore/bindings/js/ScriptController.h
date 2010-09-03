@@ -81,7 +81,7 @@ public:
     ScriptController(Frame*);
     ~ScriptController();
 
-    static PassRefPtr<DOMWrapperWorld> createWorld();
+    static PassRefPtr<DOMWrapperWorld> createWorld(String scriptId="");
 
     JSDOMWindowShell* createWindowShell(DOMWrapperWorld*);
     void destroyWindowShell(DOMWrapperWorld*);
@@ -103,7 +103,7 @@ public:
 
     static void getAllWorlds(Vector<DOMWrapperWorld*>&);
 
-    ScriptValue executeScript(const ScriptSourceCode&, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS, String shouldExecuteInIsolatedWorld = "");
+    ScriptValue executeScript(const ScriptSourceCode&, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS, String shouldExecuteInIsolatedWorld = "", String scriptId = "");
     ScriptValue executeScript(const String& script, bool forceUserGesture = false, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
     ScriptValue executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture = false, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
 
@@ -114,7 +114,7 @@ public:
     // Darwin is an exception to this rule: it is OK to call this function from any thread, even reentrantly.
     static void initializeThreading();
 
-    ScriptValue evaluate(const ScriptSourceCode&, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS, String shouldExecuteInIsolatedWorld="");
+    ScriptValue evaluate(const ScriptSourceCode&, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS, String shouldExecuteInIsolatedWorld="", String scriptId = "");
     ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*, ShouldAllowXSS shouldAllowXSS = DoNotAllowXSS);
 
     int eventHandlerLineNumber() const;

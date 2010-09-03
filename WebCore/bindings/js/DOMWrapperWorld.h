@@ -37,9 +37,9 @@ typedef JSC::WeakGCMap<StringImpl*, JSC::JSString*> JSStringCache;
 
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
 public:
-    static PassRefPtr<DOMWrapperWorld> create(JSC::JSGlobalData* globalData, bool isNormal = false)
+    static PassRefPtr<DOMWrapperWorld> create(JSC::JSGlobalData* globalData, bool isNormal = false, String scriptId = "")
     {
-        return adoptRef(new DOMWrapperWorld(globalData, isNormal));
+        return adoptRef(new DOMWrapperWorld(globalData, isNormal, scriptId));
     }
     ~DOMWrapperWorld();
     
@@ -59,7 +59,7 @@ public:
     bool isNormal() const { return m_isNormal; }
 
 protected:
-    DOMWrapperWorld(JSC::JSGlobalData*, bool isNormal);
+    DOMWrapperWorld(JSC::JSGlobalData*, bool isNormal, String scriptId);
 
 private:
     JSC::JSGlobalData* m_globalData;
@@ -67,6 +67,7 @@ private:
     HashSet<ScriptController*> m_scriptControllersWithWindowShells;
     bool m_isNormal;
     bool m_isRegistered;
+    String m_scriptId;
 };
 
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData&);

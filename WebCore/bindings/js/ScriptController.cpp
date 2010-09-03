@@ -180,7 +180,7 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     return JSValue();
 }
 
-ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ShouldAllowXSS shouldAllowXSS, String shouldExecuteInIsolatedWorld) 
+ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ShouldAllowXSS shouldAllowXSS, String shouldExecuteInIsolatedWorld, String scriptId) 
 {
 	if ((shouldExecuteInIsolatedWorld!=NULL)&&(shouldExecuteInIsolatedWorld!=""))
 	{
@@ -190,7 +190,7 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, Shoul
 		}
 		else
 		{
-			RefPtr<DOMWrapperWorld> world = createWorld();
+			RefPtr<DOMWrapperWorld> world = createWorld(scriptId);
 			m_allWorlds.add(shouldExecuteInIsolatedWorld,world);
 			ScriptValue result = evaluateInWorld(sourceCode,world.get(), shouldAllowXSS);
 			return result;
@@ -199,9 +199,9 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, Shoul
 	else return evaluateInWorld(sourceCode, mainThreadNormalWorld(), shouldAllowXSS);
 }
 
-PassRefPtr<DOMWrapperWorld> ScriptController::createWorld()
+PassRefPtr<DOMWrapperWorld> ScriptController::createWorld(String scriptId)
 {
-    return DOMWrapperWorld::create(JSDOMWindow::commonJSGlobalData());
+    return DOMWrapperWorld::create(JSDOMWindow::commonJSGlobalData(), false, scriptId);
 }
 
 void ScriptController::getAllWorlds(Vector<DOMWrapperWorld*>& worlds)

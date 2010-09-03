@@ -29,10 +29,11 @@ using namespace JSC;
 
 namespace WebCore {
 
-DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal)
+DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal, String scriptId)
     : m_globalData(globalData)
     , m_isNormal(isNormal)
     , m_isRegistered(false)
+    , m_scriptId(scriptId)
 {
     registerWorld();
 }

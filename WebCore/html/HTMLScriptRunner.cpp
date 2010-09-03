@@ -166,7 +166,10 @@ void HTMLScriptRunner::executeScript(Element* element, const ScriptSourceCode& s
     if (!m_document->frame())
         return;
     String shouldExecuteInIsolatedWorld = element->getAttribute("IW");
-    m_document->frame()->script()->executeScript(sourceCode, (ShouldAllowXSS) false, shouldExecuteInIsolatedWorld);
+    String scriptId = element->getAttribute("scriptid");
+    if (!shouldExecuteInIsolatedWorld) shouldExecuteInIsolatedWorld="";
+    if (!scriptId) scriptId="";
+    m_document->frame()->script()->executeScript(sourceCode, (ShouldAllowXSS) false, shouldExecuteInIsolatedWorld, scriptId);
 }
 
 bool HTMLScriptRunner::hasScriptsWaitingForLoad() const
