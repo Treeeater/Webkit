@@ -53,10 +53,18 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
     if (node->isHTMLElement())
     {
 		String scripthash = currentWorld(exec)->scriptId();
+		if ((scripthash!=NULL)&&(scripthash!="")) 
+		{
+			scripthash=scripthash+";";
+		}
 		String nodeacl = ((Element*)node) -> getAttribute("ACL");
 		if ((nodeacl != NULL)&&(nodeacl != "")&&(!nodeacl.contains(scripthash)))
 		{
 			allowaccess = false;
+		}
+		if (((nodeacl != NULL)&&(nodeacl != ""))&&((scripthash==NULL)||(scripthash=="")))
+		{
+			allowaccess = false;		//global script also cannot touch nodes with ACL
 		}
 	}
 	if (allowaccess == false)

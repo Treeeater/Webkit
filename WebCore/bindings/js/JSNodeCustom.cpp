@@ -72,6 +72,21 @@ JSValue JSNode::insertBefore(ExecState* exec)
 {
     Node* imp = static_cast<Node*>(impl());
     ExceptionCode ec = 0;
+	//zyc
+    if (imp->isHTMLElement())
+    {
+		String appendACL = ((Element*) imp)->getAttribute("appendACL");
+		String scripthash = currentWorld(exec)->scriptId();
+		if ((scripthash!=NULL)&&(scripthash!="")) 
+		{
+			scripthash=scripthash+";";
+		}
+		if ((appendACL != NULL)&&(appendACL != "")&&(!appendACL.contains(scripthash)))
+		{
+			return jsNull();
+		}
+	}
+	//done zyc   
     bool ok = imp->insertBefore(toNode(exec->argument(0)), toNode(exec->argument(1)), ec, true);
     setDOMException(exec, ec);
     if (ok)
@@ -83,6 +98,21 @@ JSValue JSNode::replaceChild(ExecState* exec)
 {
     Node* imp = static_cast<Node*>(impl());
     ExceptionCode ec = 0;
+    //zyc
+    if (imp->isHTMLElement())
+    {
+		String replaceACL = ((Element*) imp)->getAttribute("replaceACL");
+		String scripthash = currentWorld(exec)->scriptId();
+		if ((scripthash!=NULL)&&(scripthash!="")) 
+		{
+			scripthash=scripthash+";";
+		}
+		if ((replaceACL != NULL)&&(replaceACL != "")&&(!replaceACL.contains(scripthash)))
+		{
+			return jsNull();
+		}
+	}
+	//done zyc
     bool ok = imp->replaceChild(toNode(exec->argument(0)), toNode(exec->argument(1)), ec, true);
     setDOMException(exec, ec);
     if (ok)
@@ -94,6 +124,21 @@ JSValue JSNode::removeChild(ExecState* exec)
 {
     Node* imp = static_cast<Node*>(impl());
     ExceptionCode ec = 0;
+    //zyc
+    if (imp->isHTMLElement())
+    {
+		String removeACL = ((Element*) imp)->getAttribute("removeACL");
+		String scripthash = currentWorld(exec)->scriptId();
+		if ((scripthash!=NULL)&&(scripthash!="")) 
+		{
+			scripthash=scripthash+";";
+		}
+		if ((removeACL != NULL)&&(removeACL != "")&&(!removeACL.contains(scripthash)))
+		{
+			return jsNull();
+		}
+	}
+	//done zyc
     bool ok = imp->removeChild(toNode(exec->argument(0)), ec);
     setDOMException(exec, ec);
     if (ok)
@@ -105,6 +150,21 @@ JSValue JSNode::appendChild(ExecState* exec)
 {
     Node* imp = static_cast<Node*>(impl());
     ExceptionCode ec = 0;
+	//zyc
+    if (imp->isHTMLElement())
+    {
+		String appendACL = ((Element*) imp)->getAttribute("appendACL");
+		String scripthash = currentWorld(exec)->scriptId();
+		if ((scripthash!=NULL)&&(scripthash!="")) 
+		{
+			scripthash=scripthash+";";
+		}
+		if ((appendACL != NULL)&&(appendACL != "")&&(!appendACL.contains(scripthash)))
+		{
+			return jsNull();
+		}
+	}
+	//done zyc   
     bool ok = imp->appendChild(toNode(exec->argument(0)), ec, true);
     setDOMException(exec, ec);
     if (ok)
